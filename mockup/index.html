@@ -9,20 +9,20 @@
 </head>
 
 <body>
-    <div class="app-address-book">
+    <div class="app-address-book" ng-controller='AddrBookCntlr'>
         <!-- LEFT COLUMN -->
-        <div class="app-directory-container" ng-controller='DirGroupCntlr'>
+        <div class="app-directory-container">
             <!-- DIRECTORY COMPONENT -->
             <div class="app-directory" ng-repeat='(heading,group) in dirGroups'>
                <div class="app-directory-separator">{{ heading }}</div>
                 <div class="app-directory-item" ng-repeat='person in group'>
-                    {{ person.name }}
+                    <span ng-click="setCurrentPerson(person);">{{ person.name }}</span>
                 </div>
             </div>
         </div>
 
         <!-- RIGHT COLUMN -->
-        <div class="app-person-profile-container">
+        <div class="app-person-profile-container" ng-if="currentPerson">
             <!-- PERSON PROFILE COMPONENT -->
             <div class="app-person-profile docs-highlight docs-blue" data-intro="Person Profile" data-position="bottom">
                 <!-- PERSON PROFILE HEADER -->
@@ -30,15 +30,15 @@
                     <!-- PHOTO -->
                     <div class="app-person-profile-photo" style="background-image: url(avatar.png)"></div>
 
-                    <h2>Adam Wright</h2>
+                    <h2>{{ currentPerson.name }}</h2>
                     <div class="app-person-profile-department">
-                        Strategic Sales
+                        {{ currentPerson.title }}
                     </div>
                     <div class="app-person-profile-phone-number">
-                        919-555-5555
+                        {{ currentPerson.phone }}
                     </div>
                     <div class="app-person-profile-phone-number">
-                        <a href="mailto:adam.wright@mycompany.com">adam.wright@mycompany.com</a>
+                        <a href="mailto:{{ currentPerson.email }}">{{ currentPerson.email }}</a>
                     </div>
                 </div>
 
@@ -47,23 +47,14 @@
                     <div class="app-section-header">
                         <h3>Education</h3>
                     </div>
-                    <div class="app-section-body">
+                    <div class="app-section-body" ng-repeat="school in currentPerson.education">
                         <div class="app-history-item">
                             <div class="app-history-item-dates">
-                                2004-2005
+                                {{ school.startYear }}-{{ school.endYear }}
                             </div>
                             <div class="app-history-item-body">
-                                <div class="app-history-item-title">NC State University</div>
-                                Master's, Computer Science
-                            </div>
-                        </div>
-                        <div class="app-history-item">
-                            <div class="app-history-item-dates">
-                                2001-2004
-                            </div>
-                            <div class="app-history-item-body">
-                                <div class="app-history-item-title">NC State University</div>
-                                Bachelor's, Computer Science
+                                <div class="app-history-item-title">{{ school.institution }}</div>
+                                {{ school.degree }}
                             </div>
                         </div>
                     </div>
@@ -74,23 +65,14 @@
                     <div class="app-section-header">
                         <h3>Experience</h3>
                     </div>
-                    <div class="app-section-body">
+                    <div class="app-section-body" ng-repeat="workplace in currentPerson.workExperience">
                         <div class="app-history-item">
                             <div class="app-history-item-dates">
-                                2001-Present
+                                {{ workplace.startYear }}-{{ workplace.endYear }}
                             </div>
                             <div class="app-history-item-body">
-                                <div class="app-history-item-title">Megacorp</div>
-                                Software Developer
-                            </div>
-                        </div>
-                        <div class="app-history-item">
-                            <div class="app-history-item-dates">
-                                1980-2001
-                            </div>
-                            <div class="app-history-item-body">
-                                <div class="app-history-item-title">Umbrella Corp</div>
-                                Software Developer
+                                <div class="app-history-item-title">{{ workplace.institution }}</div>
+                                {{ workplace.title }}
                             </div>
                         </div>
                     </div>
@@ -104,14 +86,15 @@
    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
    <script>
       var peopleDirApp = angular.module('peopleDirApp', []);
-      peopleDirApp.controller('DirGroupCntlr', function($scope) {
+      peopleDirApp.controller('AddrBookCntlr', function($scope) {
          $scope.dirGroups = {};
+         $scope.currentPerson = null;
          angular.element(document).ready(function () {
             var url = window.location.origin + '/api/people';
             $.get(url, function(data) {
                var people_data, grouped_data;
                people_data = JSON.parse(data);
-               grouped_data = make_data_groups(people_data.people);
+               grouped_data = makeDataGroups(people_data.people);
                $scope.dirGroups = grouped_data;
                // angular doesn't seem to know we've changed the data. Prod it.
                $scope.$apply();
@@ -121,7 +104,27 @@
                // TODO: for more diagnostics register handler with ajaxError()
             });
          });
+         $scope.setCurrentPerson = function(person) {
+            $scope.currentPerson = person;
+         }
       });
+      
+      // for every person in the data, if an endYear is missing in
+      // workExperience or education, add one with value "Present"
+      function fixEndYears(data) {
+         data.foreach(function(person) {
+            person.education.foreach(function(school) {
+               if (!'endYear' in school) {
+                  school.endYear = 'Present';
+               }
+            });
+            person.workExperience.foreach(function(job) {
+               if (!'endYear' in job) {
+                  job.endYear = 'Present';
+               }
+            });
+         });
+      }
       
       // given an array of "people", create an object whose keys are
       // group titles and whose values are arrays of group members.
@@ -130,8 +133,7 @@
       // of names. Values are arrays of the people with names with that
       // first letter.
       // Big assumption here: that data is already sorted
-      
-      function make_data_groups(data) {
+      function makeDataGroups(data) {
          var groups = {};
          var i, group_key;
          var key_array, group_array;

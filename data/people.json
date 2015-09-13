@@ -1,7 +1,11 @@
 {
     "people": [
         {
+            "id": 1,
             "name": "Adam Wright",
+            "department": "Strategic Sales",
+            "phone": "919-555-5555",
+            "email": "adam.wright@mycompany.com",
             "education": [
                 {
                     "institution": "NC State University",
@@ -20,7 +24,11 @@
             ]
         },
         {
+            "id": 2,
             "name": "Joe Manfrey",
+            "department": "Life Support",
+            "phone": "919-555-5555",
+            "email": "joe.manfrey@mycompany.com",
             "education": [
                 {
                     "institution": "Clemson University",
@@ -39,7 +47,11 @@
             ]
         },
         {
+            "id": 3,
             "name": "Douglas Cho",
+            "department": "Continuation Engineering",
+            "phone": "919-555-5555",
+            "email": "douglas.cho@mycompany.com",
             "education": [
                 {
                     "institution": "University of NC, Chapel Hill",
@@ -58,7 +70,11 @@
             ]
         },
         {
+            "id": 4,
             "name": "Allison Murray",
+            "title": "Algorithm Analysis",
+            "phone": "919-555-5555",
+            "email": "allison.murray@mycompany.com",
             "education": [
                 {
                     "institution": "University of Southern California",
