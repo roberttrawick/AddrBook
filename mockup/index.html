@@ -41,7 +41,8 @@
                 <!-- PERSON PROFILE HEADER -->
                 <div class="app-person-profile-header">
                     <!-- PHOTO -->
-                    <div class="app-person-profile-photo" style="background-image: url(avatar.png)"></div>
+                    <div class="app-person-profile-photo"
+                      ng-style="{'background-image': 'url(/mockup/images/avatar' + currentPerson.image_id + '.png)'}"></div>
 
                     <h2>{{ currentPerson.name }}</h2>
                     <div class="app-person-profile-department">
