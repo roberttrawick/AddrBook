@@ -8,7 +8,8 @@ var app = express();
 
 app.use('/mockup/', express.static(path.join(__dirname, 'mockup')));
 app.get('/api/people', function(req, res) {
-    res.end(JSON.stringify(people, null, '    '));
+   // note: this does not reload people.json
+   res.end(JSON.stringify(people, null, '    '));
 });
 
 var HTTP_PORT = 8080;

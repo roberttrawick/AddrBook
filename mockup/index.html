@@ -6,12 +6,25 @@
    <title>Address Book Mockup</title>
    <link rel="stylesheet" type="text/css" href="style.css" />
    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 </head>
 
 <body>
     <div class="app-address-book" ng-controller='AddrBookCntlr'>
         <!-- LEFT COLUMN -->
         <div class="app-directory-container">
+            <div class="app-directory-search-section">
+               <select class="app-directory-search" ng-options="option.name for option in peopleData"
+                       ng-model="currentPerson"></select>
+               </select>
+            </div>
+            <div class="app-directory-sort-section">
+               <i class="fa fa-sort-alpha-asc" ng-click="sortAtoZ()"></i>
+               &nbsp;&nbsp;&nbsp;
+               <i class="fa fa-sort-alpha-desc" ng-click="sortZtoA()"></i>
+               &nbsp;&nbsp;&nbsp;
+            </div>
             <!-- DIRECTORY COMPONENT -->
             <div class="app-directory" ng-repeat='(heading,group) in dirGroups'>
                <div class="app-directory-separator">{{ heading }}</div>
@@ -82,19 +95,19 @@
         </div>
     </div>
 
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
    <script>
       var peopleDirApp = angular.module('peopleDirApp', []);
       peopleDirApp.controller('AddrBookCntlr', function($scope) {
+         $scope.peopleData = [];;
          $scope.dirGroups = {};
          $scope.currentPerson = null;
          angular.element(document).ready(function () {
             var url = window.location.origin + '/api/people';
             $.get(url, function(data) {
-               var people_data, grouped_data;
-               people_data = JSON.parse(data);
-               grouped_data = makeDataGroups(people_data.people);
+               var grouped_data;
+               $scope.peopleData = JSON.parse(data).people.sort(aToZPeopleSort);
+               grouped_data = makeDataGroups($scope.peopleData);
                $scope.dirGroups = grouped_data;
                // angular doesn't seem to know we've changed the data. Prod it.
                $scope.$apply();
@@ -107,6 +120,14 @@
          $scope.setCurrentPerson = function(person) {
             $scope.currentPerson = person;
          }
+         $scope.sortAtoZ = function() {
+            $scope.peopleData.sort(aToZPeopleSort);
+            $scope.dirGroups = makeDataGroups($scope.peopleData);
+         };
+         $scope.sortZtoA = function() {
+            $scope.peopleData.sort(zToAPeopleSort);
+            $scope.dirGroups = makeDataGroups($scope.peopleData);
+         };
       });
       
       // for every person in the data, if an endYear is missing in
@@ -125,7 +146,25 @@
             });
          });
       }
-      
+      // sort function for people A to Z
+      function aToZPeopleSort(person1, person2) {
+         var person1LC = person1.name.toLowerCase(),
+             person2LC = person2.name.toLowerCase();
+         var result;
+         if (person1LC < person2LC) {
+            result = -1;
+         } else if (person1LC > person2LC) {
+            result = 1;
+         } else {
+            result = 0;
+         }
+         return result;
+      }
+      // sort function for people Z to A
+      function zToAPeopleSort(person1, person2) {
+         return aToZPeopleSort(person2, person1);
+      }
+           
       // given an array of "people", create an object whose keys are
       // group titles and whose values are arrays of group members.
       // In this case the groups are defined by the first letter

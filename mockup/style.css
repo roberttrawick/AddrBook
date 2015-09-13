@@ -27,6 +27,24 @@ html, body {
     height: 100%;
 }
 
+.app-directory-search-section {
+   padding-top: 20px;
+   padding-bottom: 20px;
+   padding-left: 5px;
+}
+   
+/* select2 box for searching people */
+.app-directory-search {
+   width: 90%;
+}
+
+/* the alphabetical sort button section */
+.app-directory-sort-section {
+   font-size: 18px;
+   text-align: right;
+   color: lightgray;
+}
+   
 /* the alphabetical list of people */
 .app-directory-container {
     position: absolute;

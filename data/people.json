@@ -35,6 +35,12 @@
                     "startYear": 1990,
                     "endYear": 1995,
                     "degree": "Bachelor's, Computer Science"
+                },
+                {
+                    "institution": "Stanford University",
+                    "startYear": 1995,
+                    "endYear": 1996,
+                    "degree": "Master's, Computer Science"
                 }
             ],
 
@@ -88,7 +94,7 @@
                 {
                     "institution": "United Products",
                     "startYear": 1998,
-                    "title": "Directory of IT"
+                    "title": "Director of IT"
                 }
             ]
         }
