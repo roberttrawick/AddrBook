@@ -44,6 +44,7 @@ http://localhost:8080/api/people
 
 ### Todo
 - style the selection box
+- move the javascript for the AngularJS controller to a separate file.
 - create more data so the left panel must scroll
 - highlight the left panel name when selected by the selection box
 - synchronize the left panel (when there's more data) with the selection
